@@ -159,4 +159,76 @@ const GameController = (function() {
     };
 })();
 
+//Display Controller Module (IIFE)
+const DisplayController = (function() {
+    function renderBoard() {
+        const cells = document.querySelectorAll('.cell');
+        cells.forEach(cell => {
+            if (cell.textContent === "X") {
+                cell.textContent = 'X';
+            } else if(cell.textContent === "O") {
+                cell.textContent = 'O';
+            } else {
+                cell.textContent = '';
+            }
+        });
+    }
+
+    function updateMessage() {
+        const message = document.getElementById('message');
+        if (isGameOver) {
+            if (checkWin()) {
+                message.textContent = `Player ${currentPlayer} wins!`;
+            } else if(checkTie()) {
+                message.textContent = "It's a tie!";
+            }
+        } else {
+            message.textContent = `Player ${currentPlayer}'s turn!`;
+        }
+    }
+
+    function bindEvents() {
+        const cells = document.querySelectorAll('.cell');
+        cells.forEach((cell, index) => {
+            cell.addEventListener('click', () => {
+                const cellPosition = index;
+                if (!isGameOver && board[cellPosition] === '') {
+                    GameController.makeMove(cellPosition);
+                    renderBoard();
+                    updateMessage();
+                }
+            })
+        });
+    }
+
+    function getPlayerNames() {
+        const playerName1 = document.getElementById('player1').value;
+        const playerName2 = document.getElementById('player2').value;
+        return {playerName1, playerName2};
+    }
+
+    function displayWinner() {
+        const message = document.getElementById('message');
+        
+        if (checkWin()) {
+            message.textContent = `Player ${currentPlayer} wins!`;
+            message.classList.add('winner-message');  // Fügt Styling für Gewinner hinzu
+        } else if(checkTie()) {
+            message.textContent = "It's a tie!";
+            message.classList.add('tie-message');     // Fügt Styling für Unentschieden hinzu
+        }
+        
+        // Optional: Animationsklasse hinzufügen
+        message.classList.add('highlight-message');
+    }
+
+    return {
+        renderBoard,
+        updateMessage,
+        bindEvents,
+        getPlayerNames,
+        displayWinner,
+    };
+})();
+
 
